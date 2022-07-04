@@ -14,6 +14,7 @@ Apache Hive se ejecutará en modo local (sin HDFS).
 
 Escriba el resultado a la carpeta `output` de directorio de trabajo.
 
+
     >>> Escriba su respuesta a partir de este punto <<<
 */
 
@@ -26,9 +27,7 @@ COLLECTION ITEMS TERMINATED BY ','
 MAP KEYS TERMINATED BY '#' LINES TERMINATED BY '\n';
 LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 
-DROP TABLE IF EXISTS ANS_1;
-
-CREATE TABLE ANS_1 AS
+CREATE TABLE ANSW1 AS
 SELECT Lt, key, value
 FROM (SELECT Lt, c3 FROM t0 LATERAL VIEW EXPLODE(c2) t0 AS Lt) Dt2
 LATERAL VIEW EXPLODE(c3) Dt2;
@@ -36,5 +35,5 @@ LATERAL VIEW EXPLODE(c3) Dt2;
 INSERT OVERWRITE LOCAL DIRECTORY './output'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 SELECT Lt, key, COUNT(1)
-FROM ANS_1
+FROM ANSW1
 GROUP BY Lt, key;
