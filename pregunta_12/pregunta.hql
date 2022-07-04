@@ -1,5 +1,8 @@
 /*
 
+Pregunta
+===========================================================================
+
 Escriba una consulta que compute la cantidad de registros por letra de la 
 columna 2 y clave de la columna 3; esto es, por ejemplo, la cantidad de 
 registros en tienen la letra `a` en la columna 2 y la clave `aaa` en la 
@@ -13,6 +16,7 @@ Escriba el resultado a la carpeta `output` de directorio de trabajo.
 
     >>> Escriba su respuesta a partir de este punto <<<
 */
+
 CREATE TABLE t0 (
     c1 STRING,
     c2 ARRAY<CHAR(1)>,
@@ -22,11 +26,15 @@ COLLECTION ITEMS TERMINATED BY ','
 MAP KEYS TERMINATED BY '#' LINES TERMINATED BY '\n';
 LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 
+DROP TABLE IF EXISTS ANS_1;
+
 CREATE TABLE ANS_1 AS
-SELECT
-    c1, SIZE(c2), SIZE(c3)
-FROM t0;
+SELECT Lt, key, value
+FROM (SELECT Lt, c3 FROM t0 LATERAL VIEW EXPLODE(c2) t0 AS Lt) Dt2
+LATERAL VIEW EXPLODE(c3) Dt2;
 
 INSERT OVERWRITE LOCAL DIRECTORY './output'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-SELECT * FROM ANS_1;
+SELECT Lt, key, COUNT(1)
+FROM ANS_1
+GROUP BY Lt, key;
